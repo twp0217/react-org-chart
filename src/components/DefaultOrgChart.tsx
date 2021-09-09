@@ -1,9 +1,18 @@
-import { NodeDataType, OrgChartComponentProps, RenderNode } from '../interface';
+import { NodeDataType, OrgChartComponentProps } from '../interface';
 import classNames from 'classnames';
 import React from 'react';
 
 const DefaultOrgChart = (props: OrgChartComponentProps) => {
-  const { data, renderNode: customRenderNode, onClick } = props;
+  const {
+    data,
+    expandAll = true,
+    expandable = false,
+    renderNode: customRenderNode,
+    onExpand,
+    onClick,
+  } = props;
+
+  const [expanded, setExpanded] = React.useState<boolean>(false);
 
   const childrenLength = data.children?.length || 0;
   const colSpan: number = childrenLength * 2;
@@ -37,13 +46,28 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   };
 
   /**
+   * 处理展开
+   */
+  const handleExpandChange = () => {
+    const newExpanded = !expanded;
+    setExpanded(newExpanded);
+    onExpand && onExpand(newExpanded, data);
+  };
+
+  /**
    * 渲染垂直线
    * @returns
    */
   const renderVerticalLine = (): React.ReactNode => {
     return (
       <td colSpan={colSpan}>
-        <div className="vertical"></div>
+        <div className="vertical-line"></div>
+        {expandable ? (
+          <div
+            className="expand-icon"
+            onClick={() => handleExpandChange()}
+          ></div>
+        ) : null}
       </td>
     );
   };
@@ -80,17 +104,15 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
     if (datas.length > 0) {
       return (
         <>
-          <tr className="lines">{renderVerticalLine()}</tr>
-          <tr className="lines">{renderConnectLines()}</tr>
-          <tr className="nodes">
+          <tr className={'lines'}>{renderVerticalLine()}</tr>
+          <tr className={classNames('lines', { hidden: !expanded })}>
+            {renderConnectLines()}
+          </tr>
+          <tr className={classNames('nodes', { hidden: !expanded })}>
             {datas.map((data) => {
               return (
                 <td key={data.key} colSpan={2}>
-                  <DefaultOrgChart
-                    data={data}
-                    renderNode={customRenderNode}
-                    onClick={onClick}
-                  />
+                  <DefaultOrgChart {...props} data={data} />
                 </td>
               );
             })}
@@ -100,6 +122,10 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
     }
     return;
   };
+
+  React.useEffect(() => {
+    setExpanded(expandAll);
+  }, [expandAll]);
 
   return (
     <table>

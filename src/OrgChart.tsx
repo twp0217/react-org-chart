@@ -5,14 +5,14 @@ import { OrgChartProps } from './interface';
 import styles from './OrgChart.module.less';
 
 const OrgChart = (props: OrgChartProps) => {
-  const { data, className, style, renderNode, onClick } = props;
+  const { data, className, style, ...otherProps } = props;
 
   return !!data ? (
     <div
       className={classNames(styles.orgChartContainer, className)}
       style={style}
     >
-      <DefaultOrgChart data={data} renderNode={renderNode} onClick={onClick} />
+      <DefaultOrgChart {...otherProps} data={data} />
     </div>
   ) : null;
 };

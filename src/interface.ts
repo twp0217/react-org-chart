@@ -13,7 +13,10 @@ export type RenderNode = (
 
 export interface OrgChartComponentProps {
   data: NodeDataType;
+  expandAll?: boolean;
+  expandable?: boolean;
   renderNode?: RenderNode;
+  onExpand?: (expanded: boolean, node: NodeDataType) => void;
   onClick?: (node: NodeDataType) => void;
 }
 

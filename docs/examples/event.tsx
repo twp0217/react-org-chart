@@ -8,6 +8,10 @@ export default () => {
     console.log('onClick', node);
   };
 
+  const onExpand = (expanded: boolean, node: NodeDataType) => {
+    console.log('onExpand', expanded, node);
+  };
+
   return (
     <div
       style={{
@@ -15,7 +19,7 @@ export default () => {
         textAlign: 'center',
       }}
     >
-      <OrgChart data={data} onClick={onClick} />
+      <OrgChart data={data} expandable onClick={onClick} onExpand={onExpand} />
     </div>
   );
 };
