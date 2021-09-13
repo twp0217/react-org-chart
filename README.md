@@ -62,3 +62,8 @@ export default () => {
 | renderNode | (node: NodeDataType, originNode: React.ReactNode) => React.ReactNode; | -      | 自定义渲染节点        |
 | onExpand   | (expanded: boolean, node: NodeDataType) => void                       | -      | 展开/收起节点时的回调 |
 | onClick    | (node: NodeDataType) => void                                          | -      | 点击节点时的回调      |
+
+## 支持
+
+- 如果项目对你有帮助，请点颗星星:star:，谢谢。
+- 如果你对项目有想法、问题、BUG，欢迎讨论。
