@@ -6,6 +6,6 @@ export default defineConfig({
   logo: '/images/logo.svg',
   outputPath: 'docs-dist',
   base: '/react-org-chart',
-  publicPath: '/',
+  publicPath: '/react-org-chart/',
   // more config: https://d.umijs.org/config
 });
