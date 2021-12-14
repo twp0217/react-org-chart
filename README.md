@@ -42,26 +42,29 @@ export default () => {
 
 ### NodeDataType
 
-| 名称      | 类型                | 默认值 | 说明       |
-| --------- | ------------------- | ------ | ---------- |
-| key       | string \| number    | -      | key        |
-| label     | number              | -      | label      |
-| children  | NodeDataType[]      | -      | 子节点集合 |
-| className | string              | -      | 类名       |
-| style     | React.CSSProperties | -      | 样式       |
+| 名称         | 类型                | 默认值 | 说明               |
+| ------------ | ------------------- | ------ | ------------------ |
+| key          | string \| number    | -      | key                |
+| label        | number              | -      | label              |
+| expand       | boolean             | -      | 控制展开/收缩      |
+| loadChildren | boolean             | -      | 异步加载子节点数据 |
+| children     | NodeDataType[]      | -      | 子节点集合         |
+| className    | string              | -      | 类名               |
+| style        | React.CSSProperties | -      | 样式               |
 
 ### OrgChartProps
 
-| 名称       | 类型                                                                  | 默认值 | 说明                  |
-| ---------- | --------------------------------------------------------------------- | ------ | --------------------- |
-| data       | NodeDataType                                                          | -      | 数据                  |
-| className  | string                                                                | -      | 类名                  |
-| style      | React.CSSProperties                                                   | -      | 样式                  |
-| expandAll  | boolean                                                               | true   | 是否展开所有子节点    |
-| expandable | boolean                                                               | false  | 是否允许子节点展开    |
-| renderNode | (node: NodeDataType, originNode: React.ReactNode) => React.ReactNode; | -      | 自定义渲染节点        |
-| onExpand   | (expanded: boolean, node: NodeDataType) => void                       | -      | 展开/收起节点时的回调 |
-| onClick    | (node: NodeDataType) => void                                          | -      | 点击节点时的回调      |
+| 名称         | 类型                                                                  | 默认值 | 说明                  |
+| ------------ | --------------------------------------------------------------------- | ------ | --------------------- |
+| data         | NodeDataType                                                          | -      | 数据                  |
+| className    | string                                                                | -      | 类名                  |
+| style        | React.CSSProperties                                                   | -      | 样式                  |
+| expandAll    | boolean                                                               | true   | 是否展开所有子节点    |
+| expandable   | boolean                                                               | false  | 是否允许子节点展开    |
+| renderNode   | (node: NodeDataType, originNode: React.ReactNode) => React.ReactNode; | -      | 自定义渲染节点        |
+| loadChildren | (data: NodeDataType) => Promise<NodeDataType[]>;                      | -      | 异步加载子节点数据    |
+| onExpand     | (expanded: boolean, node: NodeDataType) => void                       | -      | 展开/收起节点时的回调 |
+| onClick      | (node: NodeDataType) => void                                          | -      | 点击节点时的回调      |
 
 ## 支持
 

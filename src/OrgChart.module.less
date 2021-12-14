@@ -59,6 +59,19 @@
               }
             }
 
+            &-loading-children {
+              &::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border: 2px solid #fff;
+                border-radius: 50%;
+                position: absolute;
+                top: 4px;
+                left: 4px;
+              }
+            }
+
             &:hover {
               background-color: darken(@line-color, 5%);
             }
@@ -96,10 +109,18 @@
 
         .node {
           display: inline-block;
-          border: 1px solid @node-color;
-          padding: 0.5rem;
           margin: 0 5px;
-          cursor: pointer;
+
+          .node-content {
+            color: black;
+            text-align: center;
+            padding: 0.2rem 0.4rem;
+            border: 1px solid @node-color;
+            border-radius: 3px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            white-space: nowrap;
+          }
         }
       }
     }

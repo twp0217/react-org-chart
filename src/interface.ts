@@ -3,6 +3,8 @@ export interface NodeDataType {
   label: string;
   children?: NodeDataType[];
   className?: string;
+  expand?: boolean;
+  loadChildren?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -16,6 +18,7 @@ export interface OrgChartComponentProps {
   expandAll?: boolean;
   expandable?: boolean;
   renderNode?: RenderNode;
+  loadChildren?: (data: NodeDataType) => Promise<NodeDataType[]>;
   onExpand?: (expanded: boolean, node: NodeDataType) => void;
   onClick?: (node: NodeDataType) => void;
 }

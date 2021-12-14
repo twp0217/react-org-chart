@@ -4,16 +4,19 @@ import React from 'react';
 
 const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const {
-    data,
     expandAll = true,
     expandable = false,
     renderNode: customRenderNode,
+    loadChildren: customLoadChildren,
     onExpand,
     onClick,
   } = props;
 
-  const [expanded, setExpanded] = React.useState<boolean>(false);
-
+  const [data, setData] = React.useState(props.data);
+  const [expanded, setExpanded] = React.useState<boolean>(
+    data?.expand ?? expandAll ?? false,
+  );
+  const [loadingChildren, setLoadingChildren] = React.useState<boolean>(false);
   const childrenLength = data.children?.length || 0;
   const colSpan: number = childrenLength * 2;
 
@@ -50,8 +53,33 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
    */
   const handleExpandChange = () => {
     const newExpanded = !expanded;
-    setExpanded(newExpanded);
-    onExpand && onExpand(newExpanded, data);
+    if (
+      !data.children &&
+      data.loadChildren === true &&
+      !!customLoadChildren &&
+      newExpanded
+    ) {
+      setLoadingChildren(true);
+      Promise.resolve(customLoadChildren(data))
+        .then((children) => {
+          setLoadingChildren(false);
+          const newData = data;
+          newData.children = children;
+          setData(newData);
+          setExpanded(newExpanded);
+          onExpand && onExpand(newExpanded, data);
+        })
+        .catch((error) => {
+          setLoadingChildren(false);
+          console.log(
+            'DefaultOrgChart handleExpandChange load children error',
+            error,
+          );
+        });
+    } else {
+      setExpanded(newExpanded);
+      onExpand && onExpand(newExpanded, data);
+    }
   };
 
   /**
@@ -61,16 +89,20 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const renderVerticalLine = (): React.ReactNode => {
     return (
       <td colSpan={colSpan}>
-        <div className="vertical-line"></div>
+        <div className="vertical-line" />
         {expandable ? (
           <div
             className={classNames({
               'expand-icon': expandable,
-              'expand-icon-expanded': expandable && expanded,
-              'expand-icon-collapsed': expandable && !expanded,
+              'expand-icon-expanded':
+                expandable && expanded && !loadingChildren,
+              'expand-icon-collapsed':
+                expandable && !expanded && !loadingChildren,
+              'expand-icon-loading-children':
+                expandable && !expanded && loadingChildren,
             })}
             onClick={() => handleExpandChange()}
-          ></div>
+          />
         ) : null}
       </td>
     );
@@ -105,7 +137,7 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
    * @returns
    */
   const renderChildren = (datas: NodeDataType[] = []): React.ReactNode => {
-    if (datas.length > 0) {
+    if ((datas?.length ?? 0) > 0) {
       return (
         <>
           <tr className={'lines'}>{renderVerticalLine()}</tr>
@@ -123,13 +155,19 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
           </tr>
         </>
       );
+    } else if (data.loadChildren === true && !!customLoadChildren) {
+      return (
+        <>
+          <tr className={'lines'}>{renderVerticalLine()}</tr>
+        </>
+      );
     }
     return;
   };
 
   React.useEffect(() => {
-    setExpanded(expandAll);
-  }, [expandAll]);
+    setExpanded(data?.expand ?? expandAll ?? false);
+  }, [data?.expand, expandAll]);
 
   return (
     <table>
