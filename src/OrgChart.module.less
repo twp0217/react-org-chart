@@ -34,23 +34,29 @@
             z-index: 99;
             cursor: pointer;
 
-            &::before {
-              content: '';
-              width: 8px;
-              height: 2px;
-              background-color: #fff;
-              position: absolute;
-              top: 7px;
-              left: 4px;
+            &-expanded,
+            &-collapsed {
+              &::before {
+                content: '';
+                width: 8px;
+                height: 2px;
+                background-color: #fff;
+                position: absolute;
+                top: 7px;
+                left: 4px;
+              }
             }
-            &::after {
-              content: '';
-              width: 2px;
-              height: 8px;
-              background-color: #fff;
-              position: absolute;
-              top: 4px;
-              left: 7px;
+
+            &-expanded {
+              &::after {
+                content: '';
+                width: 2px;
+                height: 8px;
+                background-color: #fff;
+                position: absolute;
+                top: 4px;
+                left: 7px;
+              }
             }
 
             &:hover {

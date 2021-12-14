@@ -64,7 +64,11 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
         <div className="vertical-line"></div>
         {expandable ? (
           <div
-            className="expand-icon"
+            className={classNames({
+              'expand-icon': expandable,
+              'expand-icon-expanded': expandable && expanded,
+              'expand-icon-collapsed': expandable && !expanded,
+            })}
             onClick={() => handleExpandChange()}
           ></div>
         ) : null}
