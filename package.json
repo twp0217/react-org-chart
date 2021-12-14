@@ -12,7 +12,7 @@
     "test": "umi-test",
     "test:coverage": "umi-test --coverage",
     "commit": "git-cz",
-    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "repository": {
     "type": "git",
