@@ -43,7 +43,7 @@ export default () => {
       <div
         style={{
           textAlign: 'center',
-          width: '500px',
+          width: '100%',
           height: 'auto',
           overflowX: 'scroll',
           overflowY: 'hidden',
@@ -95,8 +95,9 @@ export default () => {
                     key: 49,
                     label: '人事九部',
                   },
+                  ``,
                 ]);
-              }, 2000);
+              }, 2000000);
             });
           }}
         />

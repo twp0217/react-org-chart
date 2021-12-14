@@ -61,14 +61,15 @@
 
             &-loading-children {
               &::before {
+                box-sizing: border-box;
                 content: '';
                 width: 8px;
                 height: 8px;
                 border: 2px solid #fff;
                 border-radius: 50%;
                 position: absolute;
-                top: 4px;
-                left: 4px;
+                top: (@expand-icon-size - 8px) / 2;
+                left: (@expand-icon-size - 8px) / 2;
               }
             }
 
