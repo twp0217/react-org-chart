@@ -10,7 +10,7 @@ const OrgChart = (props: OrgChartProps) => {
   return !!data ? (
     <div
       className={classNames(styles.orgChartContainer, className)}
-      style={{ textAlign: 'center', ...style }}
+      style={style}
     >
       <DefaultOrgChart {...otherProps} data={data} />
     </div>
