@@ -1,14 +1,14 @@
 import React from 'react';
-import OrgChart, { NodeDataType } from '@twp0217/react-org-chart';
+import OrgChart, { OrgChartNodeDataType } from '@twp0217/react-org-chart';
 
 export default () => {
-  const data = require('./data.json');
+  const data: OrgChartNodeDataType = require('./data.json');
 
-  const onClick = (node: NodeDataType) => {
+  const onClick = (node: OrgChartNodeDataType) => {
     console.log('onClick', node);
   };
 
-  const onExpand = (expanded: boolean, node: NodeDataType) => {
+  const onExpand = (expanded: boolean, node: OrgChartNodeDataType) => {
     console.log('onExpand', expanded, node);
   };
 

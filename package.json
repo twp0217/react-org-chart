@@ -1,6 +1,6 @@
 {
   "name": "@twp0217/react-org-chart",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "scripts": {
     "start": "dumi dev",
     "docs:build": "dumi build",
@@ -30,6 +30,11 @@
     "url": "https://github.com/twp0217/react-org-chart/issues"
   },
   "homepage": "https://github.com/twp0217/react-org-chart#readme",
+  "files": [
+    "dist",
+    "lib",
+    "es"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",

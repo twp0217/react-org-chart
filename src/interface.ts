@@ -1,26 +1,32 @@
-export interface NodeDataType {
+export interface CellProps {
+  span: number;
+  content: React.ReactElement;
+}
+
+export type RowProps = CellProps[];
+
+export interface OrgChartNodeDataType {
   key: string | number;
   label: string;
-  children?: NodeDataType[];
+  children?: OrgChartNodeDataType[];
   className?: string;
   style?: React.CSSProperties;
 }
 
-export type RenderNode = (
-  node: NodeDataType,
-  originNode: React.ReactNode,
-) => React.ReactNode;
-
-export interface OrgChartComponentProps {
-  data: NodeDataType;
+export interface OrgChartNodeProps {
+  data: OrgChartNodeDataType;
   expandAll?: boolean;
   expandable?: boolean;
-  renderNode?: RenderNode;
-  onExpand?: (expanded: boolean, node: NodeDataType) => void;
-  onClick?: (node: NodeDataType) => void;
+  direction?: 'horizontal' | 'vertical';
+  renderNode?: (
+    node: OrgChartNodeDataType,
+    originNode: React.ReactNode,
+  ) => React.ReactNode;
+  onExpand?: (expanded: boolean, node: OrgChartNodeDataType) => void;
+  onClick?: (node: OrgChartNodeDataType) => void;
 }
 
-export interface OrgChartProps extends Partial<OrgChartComponentProps> {
+export interface OrgChartProps extends Partial<OrgChartNodeProps> {
   className?: string;
   style?: React.CSSProperties;
 }

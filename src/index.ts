@@ -1,5 +1,5 @@
-import { NodeDataType, OrgChartProps } from './interface';
+import { OrgChartNodeDataType, OrgChartProps } from './interface';
 import OrgChart from './OrgChart';
 
-export { NodeDataType, OrgChartProps };
+export { OrgChartNodeDataType, OrgChartProps };
 export default OrgChart;

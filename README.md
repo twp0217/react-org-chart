@@ -4,10 +4,10 @@
 
 ```typescript
 import React from 'react';
-import OrgChart, { NodeDataType } from '@twp0217/react-org-chart';
+import OrgChart, { OrgChartNodeDataType } from '@twp0217/react-org-chart';
 
 export default () => {
-  const data: NodeDataType = {
+  const data: OrgChartNodeDataType = {
     key: 0,
     label: '科技有限公司',
     children: [
@@ -40,28 +40,28 @@ export default () => {
 
 ## API
 
-### NodeDataType
+### OrgChartNodeDataType
 
-| 名称      | 类型                | 默认值 | 说明       |
-| --------- | ------------------- | ------ | ---------- |
-| key       | string \| number    | -      | key        |
-| label     | number              | -      | label      |
-| children  | NodeDataType[]      | -      | 子节点集合 |
-| className | string              | -      | 类名       |
-| style     | React.CSSProperties | -      | 样式       |
+| 名称      | 类型                   | 默认值 | 说明       |
+| --------- | ---------------------- | ------ | ---------- |
+| key       | string \| number       | -      | key        |
+| label     | number                 | -      | label      |
+| children  | OrgChartNodeDataType[] | -      | 子节点集合 |
+| className | string                 | -      | 类名       |
+| style     | React.CSSProperties    | -      | 样式       |
 
 ### OrgChartProps
 
-| 名称       | 类型                                                                  | 默认值 | 说明                  |
-| ---------- | --------------------------------------------------------------------- | ------ | --------------------- |
-| data       | NodeDataType                                                          | -      | 数据                  |
-| className  | string                                                                | -      | 类名                  |
-| style      | React.CSSProperties                                                   | -      | 样式                  |
-| expandAll  | boolean                                                               | true   | 是否展开所有子节点    |
-| expandable | boolean                                                               | false  | 是否允许子节点展开    |
-| renderNode | (node: NodeDataType, originNode: React.ReactNode) => React.ReactNode; | -      | 自定义渲染节点        |
-| onExpand   | (expanded: boolean, node: NodeDataType) => void                       | -      | 展开/收起节点时的回调 |
-| onClick    | (node: NodeDataType) => void                                          | -      | 点击节点时的回调      |
+| 名称       | 类型                                                                          | 默认值 | 说明                  |
+| ---------- | ----------------------------------------------------------------------------- | ------ | --------------------- |
+| data       | OrgChartNodeDataType                                                          | -      | 数据                  |
+| className  | string                                                                        | -      | 类名                  |
+| style      | React.CSSProperties                                                           | -      | 样式                  |
+| expandAll  | boolean                                                                       | true   | 是否展开所有子节点    |
+| expandable | boolean                                                                       | false  | 是否允许子节点展开    |
+| renderNode | (node: OrgChartNodeDataType, originNode: React.ReactNode) => React.ReactNode; | -      | 自定义渲染节点        |
+| onExpand   | (expanded: boolean, node: OrgChartNodeDataType) => void                       | -      | 展开/收起节点时的回调 |
+| onClick    | (node: OrgChartNodeDataType) => void                                          | -      | 点击节点时的回调      |
 
 ## 支持
 
