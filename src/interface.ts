@@ -1,3 +1,8 @@
+/* eslint-disable */
+// noinspection TypeScriptUMDGlobal
+
+// noinspection TypeScriptUMDGlobal
+
 export interface NodeDataType {
   key: string | number;
   label: string;
@@ -17,9 +22,19 @@ export interface OrgChartComponentProps {
   data: NodeDataType;
   expandAll?: boolean;
   expandable?: boolean;
+  expandableOnlyOneOnSameTime?: boolean;
+  expandedPath?: string[];
   renderNode?: RenderNode;
+  setBrothersExpand?: (
+    handleChildExpanded: (item: NodeDataType) => boolean,
+    handleExpandedBySelf: (processBySelf: boolean) => void,
+  ) => void;
   loadChildren?: (data: NodeDataType) => Promise<NodeDataType[]>;
-  onExpand?: (expanded: boolean, node: NodeDataType) => void;
+  onExpand?: (
+    expanded: boolean,
+    node: NodeDataType,
+    expandedPath: string[],
+  ) => void;
   onClick?: (node: NodeDataType) => void;
 }
 

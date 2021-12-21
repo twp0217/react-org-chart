@@ -1,6 +1,6 @@
 import { NodeDataType, OrgChartComponentProps } from '../interface';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useReducer } from 'react';
 
 const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const {
@@ -12,6 +12,8 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
     onClick,
   } = props;
 
+  // eslint-disable-next-line
+  const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
   const [data, setData] = React.useState(props.data);
   const [expanded, setExpanded] = React.useState<boolean>(
     data?.expand ?? expandAll ?? false,
@@ -19,6 +21,8 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const [loadingChildren, setLoadingChildren] = React.useState<boolean>(false);
   const childrenLength = data.children?.length || 0;
   const colSpan: number = childrenLength * 2;
+  const expandableOnlyOneOnSameTime =
+    props.expandableOnlyOneOnSameTime ?? false;
 
   /**
    * 渲染节点
@@ -62,12 +66,22 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
       setLoadingChildren(true);
       Promise.resolve(customLoadChildren(data))
         .then((children) => {
+          console.log(
+            'handleExpandChange expandableOnlyOneOnSameTime=',
+            expandableOnlyOneOnSameTime,
+            ', children=',
+            children,
+          );
           setLoadingChildren(false);
-          const newData = data;
-          newData.children = children;
-          setData(newData);
-          setExpanded(newExpanded);
-          onExpand && onExpand(newExpanded, data);
+
+          if (!expandableOnlyOneOnSameTime) {
+            const newData = data;
+            newData.children = children;
+            setData(newData);
+          } else {
+            data.children = children;
+          }
+          processExpanded(newExpanded);
         })
         .catch((error) => {
           setLoadingChildren(false);
@@ -77,8 +91,64 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
           );
         });
     } else {
+      processExpanded(newExpanded);
+    }
+  };
+
+  const getExpandedPath = (newExpanded = expanded) =>
+    (props.expandedPath ?? []).concat(newExpanded ? [data.label] : []);
+
+  const processExpanded = (newExpanded: boolean) => {
+    if (
+      !newExpanded ||
+      !expandableOnlyOneOnSameTime ||
+      (data?.children?.length ?? 0) <= 1
+    ) {
       setExpanded(newExpanded);
-      onExpand && onExpand(newExpanded, data);
+      onExpand && onExpand(newExpanded, data, getExpandedPath(newExpanded));
+    } else {
+      props?.setBrothersExpand?.(
+        (item) => (item.label === data.label ? newExpanded : false),
+        (processBySelf) => {
+          if (processBySelf) {
+            setExpanded(newExpanded);
+          }
+        },
+      );
+      onExpand && onExpand(newExpanded, data, getExpandedPath(newExpanded));
+    }
+  };
+
+  const setChildrenExpand = (
+    handleChildExpanded: (item: NodeDataType) => boolean,
+    handleExpandedBySelf: (processBySelf: boolean) => void,
+  ) => {
+    let changeCount = 0;
+    data?.children?.map((item) => {
+      let newExpand = handleChildExpanded(item);
+      if ((item.children?.length ?? 0 > 0) && item.expand !== newExpand) {
+        console.log(
+          'setChildrenExpand item.label',
+          changeCount,
+          item.label,
+          item.expand,
+          newExpand,
+        );
+        if (item.expand !== undefined || !newExpand) {
+          changeCount++;
+        }
+        item.expand = newExpand;
+      }
+    });
+    if (changeCount > 1) {
+      console.log('setChildrenExpand forceUpdate changeCount', changeCount);
+      forceUpdate();
+    } else {
+      console.log(
+        'setChildrenExpand handleExpandedBySelf changeCount',
+        changeCount,
+      );
+      handleExpandedBySelf(true);
     }
   };
 
@@ -133,11 +203,12 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
 
   /**
    * 渲染子节点
-   * @param datas
+   * @param children
    * @returns
    */
-  const renderChildren = (datas: NodeDataType[] = []): React.ReactNode => {
-    if ((datas?.length ?? 0) > 0) {
+  const renderChildren = (children: NodeDataType[] = []): React.ReactNode => {
+    console.log('renderChildren', data);
+    if ((children?.length ?? 0) > 0) {
       return (
         <>
           <tr className={'lines'}>{renderVerticalLine()}</tr>
@@ -145,10 +216,23 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
             {renderConnectLines()}
           </tr>
           <tr className={classNames('nodes', { hidden: !expanded })}>
-            {datas.map((data) => {
+            {children.map((child) => {
               return (
-                <td key={data.key} colSpan={2}>
-                  <DefaultOrgChart {...props} data={data} />
+                <td key={child.key} colSpan={2}>
+                  <DefaultOrgChart
+                    {...props}
+                    data={child}
+                    expandedPath={getExpandedPath()}
+                    setBrothersExpand={(
+                      handleChildExpanded: (item: NodeDataType) => boolean,
+                      handleExpandedBySelf: (processBySelf: boolean) => void,
+                    ) => {
+                      setChildrenExpand(
+                        handleChildExpanded,
+                        handleExpandedBySelf,
+                      );
+                    }}
+                  />
                 </td>
               );
             })}
