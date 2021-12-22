@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import DefaultOrgChart from './components/DefaultOrgChart';
 import { OrgChartProps } from './interface';
+// @ts-ignore
 import styles from './OrgChart.module.less';
 
 const OrgChart = (props: OrgChartProps) => {
