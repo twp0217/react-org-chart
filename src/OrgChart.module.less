@@ -1,7 +1,8 @@
-@node-color: #1890ff;
-@line-width: 1px;
+@node-color: #3870e1;
+@line-width: 2px;
 @line-color: @node-color;
-@expand-icon-size: 16px;
+@expand-icon-size: 18px;
+@expand-icon-background-color: #e8eefb;
 
 .orgChartContainer {
   display: inline-block;
@@ -21,11 +22,13 @@
           position: relative;
 
           .expand-icon {
+            box-sizing: content-box;
             display: inline-block;
             width: @expand-icon-size;
             height: @expand-icon-size;
             border-radius: 50%;
-            background-color: @line-color;
+            background-color: @expand-icon-background-color;
+            border: 1px solid @node-color;
             position: absolute;
             left: 50%;
             bottom: 0;
@@ -37,25 +40,27 @@
             &-expanded,
             &-collapsed {
               &::before {
+                box-sizing: border-box;
                 content: '';
-                width: 8px;
+                width: 10px;
                 height: 2px;
-                background-color: #fff;
+                background-color: @node-color;
                 position: absolute;
-                top: 7px;
-                left: 4px;
+                top: (@expand-icon-size - 2px) / 2;
+                left: (@expand-icon-size - 10px) / 2;
               }
             }
 
             &-collapsed {
               &::after {
+                box-sizing: border-box;
                 content: '';
                 width: 2px;
-                height: 8px;
-                background-color: #fff;
+                height: 10px;
+                background-color: @node-color;
                 position: absolute;
-                top: 4px;
-                left: 7px;
+                top: (@expand-icon-size - 10px) / 2;
+                left: (@expand-icon-size - 2px) / 2;
               }
             }
 
@@ -63,18 +68,18 @@
               &::before {
                 box-sizing: border-box;
                 content: '';
-                width: 8px;
-                height: 8px;
-                border: 2px solid #fff;
+                width: 10px;
+                height: 10px;
+                border: 2px solid @node-color;
                 border-radius: 50%;
                 position: absolute;
-                top: (@expand-icon-size - 8px) / 2;
-                left: (@expand-icon-size - 8px) / 2;
+                top: (@expand-icon-size - 10px) / 2;
+                left: (@expand-icon-size - 10px) / 2;
               }
             }
 
             &:hover {
-              background-color: darken(@line-color, 5%);
+              background-color: darken(@expand-icon-background-color, 5%);
             }
           }
 
