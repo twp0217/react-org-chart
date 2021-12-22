@@ -91,18 +91,42 @@
               height: 100%;
               background-color: @line-color;
               display: inline-block;
+              user-select: none;
+            }
+
+            .mixLeft( @a ) when (mod(@a,2)>0) {
+              border-right: @line-width solid @line-color;
+            }
+            .mixLeft( @a ) when (od(@a,2)<0) {
+              border-right: @line-width solid @line-color;
+            }
+            .mixLeft( @a ) when (mod(@a,2)=0) {
+              border-right: @line-width / 2 solid @line-color;
             }
 
             &.left {
-              border-right: @line-width solid @line-color;
+              .mixLeft(@line-width);
+              user-select: none;
+            }
+
+            .mixRight( @a ) when (mod(@a,2)<0) {
+              border-left: @line-width solid transparent;
+            }
+            .mixRight( @a ) when (mod(@a,2)>0) {
+              border-left: @line-width solid transparent;
+            }
+            .mixRight( @a ) when (mod(@a,2)=0) {
+              border-left: @line-width / 2 solid @line-color;
             }
 
             &.right {
-              border-left: @line-width solid transparent;
+              .mixRight(@line-width);
+              user-select: none;
             }
 
             &.top {
               border-top: @line-width solid @line-color;
+              user-select: none;
             }
           }
         }
