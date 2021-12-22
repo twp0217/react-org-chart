@@ -12,35 +12,60 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
     onClick,
   } = props;
 
+  //region data with key map
+  const [data, setData] = React.useState(props.data);
+  const getValue = (key: string, fromData: NodeDataType = data) =>
+    fromData[props.keyMap?.[key] ?? key];
+  const setValue = (key: string, value: any, toData: NodeDataType = data) => {
+    toData[props.keyMap?.[key] ?? key] = value;
+    return toData;
+  };
+  const label = getValue('label');
+  const style = getValue('style');
+  const className = getValue('className');
+  const loadChildren = getValue('loadChildren');
+  const expand = getValue('expand');
+  const children = () => getValue('children');
+  const childrenLength = () => children()?.length || 0;
+  const [colSpan, setColSpan] = React.useState(childrenLength() * 2);
+  //endregion
+
+  if (props.debug === true) {
+    console.log('DefaultOrgChart props=', props);
+    console.log('DefaultOrgChart label=', label);
+    console.log('DefaultOrgChart style=', style);
+    console.log('DefaultOrgChart className=', className);
+    console.log('DefaultOrgChart loadChildren=', loadChildren);
+    console.log('DefaultOrgChart expand=', expand);
+    console.log('DefaultOrgChart children=', children());
+    console.log('DefaultOrgChart childrenLength=', childrenLength());
+  }
+
   // eslint-disable-next-line
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-  const [data, setData] = React.useState(props.data);
   const [expanded, setExpanded] = React.useState<boolean>(
-    data?.expand ?? expandAll ?? false,
+    expand ?? expandAll ?? false,
   );
   const [loadingChildren, setLoadingChildren] = React.useState<boolean>(false);
-  const childrenLength = data.children?.length || 0;
-  const colSpan: number = childrenLength * 2;
   const expandableOnlyOneOnSameTime =
     props.expandableOnlyOneOnSameTime ?? false;
 
   /**
    * 渲染节点
    * @param data
-   * @returns
    */
   const renderNode = (data: NodeDataType): React.ReactNode => {
     const contentNode: React.ReactNode = (
-      <div className="node-content" title={data.label}>
-        {data.label}
+      <div className="node-content" title={label}>
+        {label}
       </div>
     );
     return (
       <tr>
         <td colSpan={colSpan}>
           <div
-            className={classNames('node', data.className)}
-            style={data.style}
+            className={classNames('node', className)}
+            style={style}
             onClick={() => onClick && onClick(data)}
           >
             {!!customRenderNode
@@ -58,37 +83,27 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const handleExpandChange = () => {
     const newExpanded = !expanded;
     if (
-      !data.children &&
-      data.loadChildren === true &&
+      (children()?.length ?? 0 <= 0) &&
+      loadChildren === true &&
       !!customLoadChildren &&
       newExpanded
     ) {
       setLoadingChildren(true);
       Promise.resolve(customLoadChildren(data))
-        .then((children) => {
-          console.log(
-            'handleExpandChange expandableOnlyOneOnSameTime=',
-            expandableOnlyOneOnSameTime,
-            ', children=',
-            children,
-          );
+        .then((newChildren) => {
           setLoadingChildren(false);
-
           if (!expandableOnlyOneOnSameTime) {
             const newData = data;
-            newData.children = children;
+            setValue('children', newChildren, newData);
             setData(newData);
           } else {
-            data.children = children;
+            setValue('children', newChildren);
           }
+          setColSpan(childrenLength() * 2);
           processExpanded(newExpanded);
         })
-        .catch((error) => {
+        .catch((ignore) => {
           setLoadingChildren(false);
-          console.log(
-            'DefaultOrgChart handleExpandChange load children error',
-            error,
-          );
         });
     } else {
       processExpanded(newExpanded);
@@ -96,19 +111,20 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   };
 
   const getExpandedPath = (newExpanded = expanded) =>
-    (props.expandedPath ?? []).concat(newExpanded ? [data.label] : []);
+    (props.expandedPath ?? []).concat(newExpanded ? [label] : []);
 
   const processExpanded = (newExpanded: boolean) => {
     if (
+      !props.setBrothersExpand ||
       !newExpanded ||
       !expandableOnlyOneOnSameTime ||
-      (data?.children?.length ?? 0) <= 1
+      childrenLength() <= 1
     ) {
       setExpanded(newExpanded);
       onExpand && onExpand(newExpanded, data, getExpandedPath(newExpanded));
     } else {
-      props?.setBrothersExpand?.(
-        (item) => (item.label === data.label ? newExpanded : false),
+      props.setBrothersExpand?.(
+        (item) => (getValue('label', item) === label ? newExpanded : false),
         (processBySelf) => {
           if (processBySelf) {
             setExpanded(newExpanded);
@@ -124,30 +140,25 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
     handleExpandedBySelf: (processBySelf: boolean) => void,
   ) => {
     let changeCount = 0;
-    data?.children?.map((item) => {
+    children()?.map((item: NodeDataType) => {
       let newExpand = handleChildExpanded(item);
-      if ((item.children?.length ?? 0 > 0) && item.expand !== newExpand) {
-        console.log(
-          'setChildrenExpand item.label',
-          changeCount,
-          item.label,
-          item.expand,
-          newExpand,
-        );
-        if (item.expand !== undefined || !newExpand) {
+      let oldExpand = getValue('expand', item);
+      if (
+        (getValue('children', item)?.length ?? 0 > 0) &&
+        oldExpand !== newExpand
+      ) {
+        if (
+          (!oldExpand && newExpand === true) ||
+          (oldExpand === true && !newExpand)
+        ) {
           changeCount++;
         }
-        item.expand = newExpand;
+        setValue('expand', newExpand, item);
       }
     });
     if (changeCount > 1) {
-      console.log('setChildrenExpand forceUpdate changeCount', changeCount);
       forceUpdate();
     } else {
-      console.log(
-        'setChildrenExpand handleExpandedBySelf changeCount',
-        changeCount,
-      );
       handleExpandedBySelf(true);
     }
   };
@@ -206,9 +217,9 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
    * @param children
    * @returns
    */
-  const renderChildren = (children: NodeDataType[] = []): React.ReactNode => {
-    console.log('renderChildren', data);
+  const renderChildren = (children: NodeDataType[]): React.ReactNode => {
     if ((children?.length ?? 0) > 0) {
+      let uniqueTime = new Date().getTime();
       return (
         <>
           <tr className={'lines'}>{renderVerticalLine()}</tr>
@@ -216,9 +227,12 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
             {renderConnectLines()}
           </tr>
           <tr className={classNames('nodes', { hidden: !expanded })}>
-            {children.map((child) => {
+            {children.map((child, index) => {
               return (
-                <td key={child.key} colSpan={2}>
+                <td
+                  key={getValue('key', child) ?? `${uniqueTime}_${index}`}
+                  colSpan={2}
+                >
                   <DefaultOrgChart
                     {...props}
                     data={child}
@@ -239,7 +253,7 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
           </tr>
         </>
       );
-    } else if (data.loadChildren === true && !!customLoadChildren) {
+    } else if (loadChildren === true && !!customLoadChildren) {
       return (
         <>
           <tr className={'lines'}>{renderVerticalLine()}</tr>
@@ -250,14 +264,14 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   };
 
   React.useEffect(() => {
-    setExpanded(data?.expand ?? expandAll ?? false);
-  }, [data?.expand, expandAll]);
+    setExpanded(expand ?? expandAll ?? false);
+  }, [data, expand, expandAll]);
 
   return (
     <table>
       <tbody>
         {renderNode(data)}
-        {renderChildren(data.children)}
+        {renderChildren(children())}
       </tbody>
     </table>
   );
