@@ -40,6 +40,7 @@ export interface OrgChartComponentProps {
     expandedPath: string[],
   ) => void;
   onClick?: (node: NodeDataType) => void;
+  filter?: (node: NodeDataType) => boolean;
 }
 
 export interface OrgChartProps extends Partial<OrgChartComponentProps> {

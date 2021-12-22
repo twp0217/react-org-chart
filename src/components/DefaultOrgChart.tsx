@@ -25,7 +25,10 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const className = getValue('className');
   const loadChildren = getValue('loadChildren');
   const expand = getValue('expand');
-  const children = () => getValue('children');
+  const children = () =>
+    getValue('children')?.filter((item: NodeDataType) => {
+      return props.filter?.(item) ?? true;
+    });
   const childrenLength = () => children()?.length || 0;
   const [colSpan, setColSpan] = React.useState(childrenLength() * 2);
   //endregion
