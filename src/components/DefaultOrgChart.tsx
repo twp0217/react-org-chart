@@ -30,7 +30,7 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
       return props.filter?.(item) ?? true;
     });
   const childrenLength = () => children()?.length || 0;
-  const [colSpan, setColSpan] = React.useState(childrenLength() * 2);
+  const colSpan = () => childrenLength() * 2;
   //endregion
 
   if (props.debug === true) {
@@ -65,7 +65,7 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
     );
     return (
       <tr>
-        <td colSpan={colSpan}>
+        <td colSpan={colSpan()}>
           <div
             className={classNames('node', className)}
             style={style}
@@ -86,7 +86,7 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
   const handleExpandChange = () => {
     const newExpanded = !expanded;
     if (
-      (children()?.length ?? 0 <= 0) &&
+      childrenLength() <= 0 &&
       loadChildren === true &&
       !!customLoadChildren &&
       newExpanded
@@ -102,7 +102,6 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
           } else {
             setValue('children', newChildren);
           }
-          setColSpan(childrenLength() * 2);
           processExpanded(newExpanded);
         })
         .catch((ignore) => {
@@ -172,7 +171,7 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
    */
   const renderVerticalLine = (): React.ReactNode => {
     return (
-      <td colSpan={colSpan}>
+      <td colSpan={colSpan()}>
         <div className="vertical-line" />
         {expandable ? (
           <div
@@ -198,14 +197,14 @@ const DefaultOrgChart = (props: OrgChartComponentProps) => {
    */
   const renderConnectLines = (): React.ReactNode[] => {
     const lines: React.ReactNode[] = [];
-    for (let index = 0; index < colSpan; index++) {
+    for (let index = 0; index < colSpan(); index++) {
       lines.push(
         <td
           key={index}
           className={classNames('line', {
             left: index % 2 === 0,
             right: index % 2 !== 0,
-            top: index !== colSpan - 1 && index !== 0,
+            top: index !== colSpan() - 1 && index !== 0,
           })}
         >
           &nbsp;
